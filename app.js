@@ -26,8 +26,8 @@ app.use((req, res, next) => {
       jwt.verify(token, 'sean', function(err, decoded) {
         if (err) {
           res.send({ 
-            code: '4005', 
-            message: 'token已过期.' 
+            code: '4005',
+            message: 'token已过期.'
           });
         } else {
           req.decoded = decoded;  

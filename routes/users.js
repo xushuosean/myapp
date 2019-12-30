@@ -4,6 +4,7 @@ var sql = require('./../sql');
 var uuid = require('node-uuid');
 var jwt = require('jsonwebtoken');
 var axios = require('axios');
+var utils = require('./../utils')
 var router = express.Router();
 
 /* GET users listing. */
@@ -24,11 +25,8 @@ router.get('/login', function(req, res, next) {
             // expiresIn: 60*60*24// 授权时效24小时
             expiresIn: 60*60*24*7// 授权时效7天
           })
-          res.send({
-            code: 1000,
-            message: 'register and login success',
-            token: token
-          })
+          utils.loginAndReg.token = token
+          res.send(utils.loginAndReg)
         })
       } else {
         // 生成token
@@ -36,11 +34,8 @@ router.get('/login', function(req, res, next) {
           // expiresIn: 60*60*24// 授权时效24小时
           expiresIn: 60*60*24*7// 授权时效7天
         })
-        res.send({
-          code: 1001,
-          message: 'login success',
-          token: token
-        })
+        utils.loginSuccess.token = token
+        res.send(utils.loginSuccess)
       }
     })
   })
@@ -49,7 +44,7 @@ router.get('/login', function(req, res, next) {
 router.get('/find', function(req, res,next) {
   var openid = 'oMdYl0YOjquEQJYGIgRXFcmyIbsc';
   sql.find(User, { openid }, { _id: 0}).then(function (data) {
-    res.send(data)
+    res.send(utils.loginSuccess)
   })
 })
 

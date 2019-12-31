@@ -11,7 +11,9 @@ router.get('/login', function(req, res, next) {
   console.log(req.query)
   var { code, userInfo } = req.query;
   var { avatarUrl, city, country, gender, language, nickName, province } = JSON.parse(userInfo);
-  axios.get(`https://api.weixin.qq.com/sns/jscode2session?appid=wx9c4dd20171b6cecf&secret=7b5b93a3447a06510fafd058f153c9f4&js_code=${code}&grant_type=authorization_code`).then(function (response) {
+  var appid = 'wx9c4dd20171b6cecf';
+  var secret = '7b5b93a3447a06510fafd058f153c9f4';
+  axios.get(`https://api.weixin.qq.com/sns/jscode2session?appid=${appid}&secret=${secret}&js_code=${code}&grant_type=authorization_code`).then(function (response) {
     var { openid } = response.data;
     // 检测数据库内是否含有此用户
     sql.find(User, { openid }).then(data => {

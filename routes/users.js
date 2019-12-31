@@ -1,10 +1,12 @@
 var express = require('express');
 var User = require('./../sql/collection/users');
+var Anni = require('./../sql/collection/anniversary');
 var sql = require('./../sql');
 var uuid = require('node-uuid');
 var jwt = require('jsonwebtoken');
 var axios = require('axios');
 var utils = require('./../utils')
+var timeStamp = require('./../utils/timeStamp.js')
 var router = express.Router();
 
 /* GET users listing. */
@@ -43,10 +45,34 @@ router.get('/login', function(req, res, next) {
   })
 });
 
-router.get('/find', function(req, res,next) {
+router.get('/find', function(req, res, next) {
   var openid = 'oMdYl0YOjquEQJYGIgRXFcmyIbsc';
   sql.find(User, { openid }, { _id: 0}).then(function (data) {
     res.send(utils.loginSuccess)
+  })
+})
+
+router.get('/addAnni', function (req, res, next) {
+  var { openid, title, desc, time, type } = req.query
+  var dateid = 'dateid_' + uuid.v1()
+  sql.insert(Anni, { dateid, openid, title, desc, time, type }).then(() => {
+    res.send(utils.anniSuccess)
+  })
+})
+
+router.get('/findAnni', function (req, res, next) {
+  var { openid } = req.query
+  sql.find(Anni, { openid }).then((response) =>{
+    var nowDate = Date.now()
+    // console.log(nowDate)
+    var objStr = JSON.stringify(response)
+    var obj = JSON.parse(objStr)
+    var obj = obj.map((item, index) => {
+      var dateCollection = timeStamp.timeExcu(item.time, nowDate)
+      item.dateCollection = dateCollection
+      return item
+    })
+    res.send(obj)
   })
 })
 
